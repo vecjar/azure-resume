@@ -22,5 +22,5 @@ CI/CD with GitHub Actions:
 - Infrastructure workflow: manual triggered workflow to deploy Azure infrastructure resources
 
 # Deployment
-az group create --name azureresumetestjv --location australiaeast
-az deployment group create --resource-group azureresumetestjv --template-file ./main.bicep --parameters ./parameters.bicepparam
+az group create --name azure-cloud-resume-rg --location australiaeast
+az deployment group create --resource-group azure-cloud-resume-rg --template-file ./main.bicep --parameters ./parameters.bicepparam

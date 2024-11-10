@@ -12,9 +12,9 @@ permissions:
     contents: read
 
 env:
-  AZURE_BLOB_STORAGE_ACCOUNT_NAME: 'stgwebazurecloudresumeik'   # set this to your blob storage account name that hosts static website
-  AZURE_CDN_PROFILE_NAME: 'azurecloudresumeik7k'       # set this to your cdn profile name
-  AZURE_CDN_ENDPOINT_NAME: 'azurecloudresumeik7k'                   # set this to your cdn endpoint name
+  AZURE_BLOB_STORAGE_ACCOUNT_NAME: 'stgwebazurecloudresumeb2'   # set this to your blob storage account name that hosts static website
+  AZURE_CDN_PROFILE_NAME: 'azurecloudresumeb2tc'       # set this to your cdn profile name
+  AZURE_CDN_ENDPOINT_NAME: 'azurecloudresumeb2tc'                   # set this to your cdn endpoint name
   AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'                   # set this to your resource group name
 
 jobs:

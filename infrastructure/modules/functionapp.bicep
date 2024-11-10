@@ -3,9 +3,6 @@ param functionRuntime string = 'dotnet'
 param appName string
 param cors string
 
-@description('Id of a existing keyvault that will be used to store and retrieve keys in this deployment')
-param keyVaultName string
-
 @description('User-assigned managed identity that will be attached to this function and will have power to connect to different resources.')
 param managedSystemIdentityRbacId string
 
@@ -15,7 +12,7 @@ param appInternalServiceName string = 'api'
 @description('Application insights instrumentation key.')
 param appInsightsInstrumentationKey string
 
-param deploymentDate string = utcNow()
+// param deploymentDate string = utcNow()
 
 param appNameSuffix string
 
@@ -100,7 +97,6 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
   }
   kind: 'functionapp'
   properties: {
-    keyVaultReferenceIdentity: managedSystemIdentityRbacId
     enabled: true
     hostNameSslStates: [
       {
