@@ -26,12 +26,12 @@ jobs:
   displayName: 'Deploy Infrastructure'
   steps:
     
-    # Log in to Azure using Service Principal
+    # Log in to Azure using Service Principal (PowerShell for cross-platform)
     - task: AzureCLI@2
       displayName: 'Azure Login'
       inputs:
         azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: bash
+        scriptType: pwsh  # PowerShell for Windows agents
         scriptLocation: inlineScript
         inlineScript: |
           az login --service-principal -u $(AZURE_CLIENT_ID) -p $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
@@ -41,7 +41,7 @@ jobs:
       displayName: 'Deploy Bicep Template'
       inputs:
         azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: bash
+        scriptType: pwsh  # PowerShell for Windows agents
         scriptLocation: inlineScript
         inlineScript: |
           az deployment group create \
@@ -54,7 +54,7 @@ jobs:
       displayName: 'Azure Logout'
       inputs:
         azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: bash
+        scriptType: pwsh  # PowerShell for Windows agents
         scriptLocation: inlineScript
         inlineScript: |
           az logout
