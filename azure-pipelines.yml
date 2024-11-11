@@ -38,5 +38,5 @@ jobs:
           az deployment group create ^
             --resource-group "$(rgname)" ^
             --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" ^
-            --parameters environment="$(environment)" location="$(location)"
+            --parameters "$(Build.SourcesDirectory)/infrastructure/parameters.bicepparam"
       displayName: 'Deploy Bicep File'
