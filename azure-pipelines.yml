@@ -34,9 +34,8 @@ jobs:
         scriptType: 'powershell'  # Use Windows PowerShell
         scriptLocation: 'inlineScript'
         inlineScript: |
+          echo "Listing files in infrastructure folder..."
+          dir "$(Build.SourcesDirectory)/infrastructure"
           echo "Starting deployment..."
-          az deployment group create ^
-            --resource-group "$(rgname)" ^
-            --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" ^
-            --parameters "$(Build.SourcesDirectory)/infrastructure/parameters.bicepparam"
+          az deployment group create --resource-group "$(rgname)" --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" --parameters "$(Build.SourcesDirectory)/infrastructure/parameters.bicepparam"
       displayName: 'Deploy Bicep File'
