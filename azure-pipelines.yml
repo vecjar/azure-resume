@@ -16,7 +16,7 @@ pr:
 
 # Specify the self-hosted agent pool
 pool:
-  name: 'Agent'  # Replace with the name of your self-hosted agent pool
+  name: 'Default'  # Replace with the name of your self-hosted agent pool
 
 variables:
   AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'  # Set this to your resource group name
