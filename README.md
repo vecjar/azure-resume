@@ -24,3 +24,9 @@ CI/CD with GitHub Actions:
 # Deployment
 az group create --name azure-cloud-resume-rg --location australiaeast
 az deployment group create --resource-group azure-cloud-resume-rg --template-file ./main.bicep --parameters ./parameters.bicepparam
+
+# Post Manual Deployments
+Create Cosmos DB item id: 1 and count: 0 in json
+Set Function App enviroment variable = AzureResumeConnectionString = {cosmosdb key}
+Enable CORS in Function App and add https://jv.azureedge.net to Allowed Origens
+Set const functionApiUrl in main.js to the Function URL before deploying static website

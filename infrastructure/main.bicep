@@ -10,16 +10,8 @@ param location string = resourceGroup().location
 // a 4 character suffix to add to the various names of Azure resources to help them be unique
 var appSuffix = substring(uniqueString(resourceGroup().id),0,4)
 
-// creates an user-assigned managed identity that will be used by different azure resources to access each other.
-module managedSystemIdentity './modules/msi.bicep' = {
-  name: 'managed-system-identity-deployment'
-  params: {
-    location: location
-    managedIdentityName: '${appName}Identity'
-  }
-}
 
-// creates the cosmos db account and database with a container configured
+// creates the cosmos db account and database
 module cosmos './modules/cosmosdb.bicep' = {
   name: 'cosmos-deployment'
   params:{
@@ -46,29 +38,17 @@ module azureFunctions_api './modules/functionapp.bicep' = {
     appNameSuffix: appSuffix
     cors: cors
     appInsightsInstrumentationKey: logAnalytics.outputs.instrumentationKey
-    managedSystemIdentityRbacId: managedSystemIdentity.outputs.id
   }
   dependsOn: [
     logAnalytics
   ]
 }
 
-// creates blob storage for static website
-module staticWebStorage './modules/storageweb.bicep' = {
-  name: 'static-web-storage-deployment'
-  params: {
-    appName: appName
-    location: location
-  }
-}
-
-// creates cdn profile, endpoint and custom domain
+// creates cdn profile
 module cdn './modules/cdn.bicep' = {
   name: 'cdn-deployment'
   params: {
     location: location
     profileName: toLower('${appName}${appSuffix}')
-    endpointName: toLower('${appName}${appSuffix}')
-    originUrl: replace(replace('${staticWebStorage.outputs.staticWebsiteUrl}', 'https://', ''), '/', '')
   }
 }
