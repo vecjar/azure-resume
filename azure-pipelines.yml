@@ -18,7 +18,7 @@ pool:
   name: Default  # Use your self-hosted agent pool name (change if using custom pool)
 
 variables:
-  AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'  # Set this to your resource group name
+  rgname: 'azure-cloud-resume-rg'  # Set this to your resource group name
   location: 'Australia East'  # Define location here for reusability
   environment: 'dev'  # Define environment type
 
@@ -35,18 +35,8 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo "Starting deployment..."
-          az deployment group create ^
-            --resource-group $(AZURE_RESOURCE_GROUP) ^
-            --template-file ./infrastructure/main.bicep ^
-            --parameters ./infrastructure/parameters.bicepparam
-      displayName: 'Deploy Bicep Template'
-
-    # Step 2: Logout from Azure (Optional, if you want to logout explicitly)
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
-        scriptType: 'powershell'  # Use Windows PowerShell
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az logout
-      displayName: 'Azure Logout'
+          az deployment sub create ^
+            --location "$(location)" ^
+            --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" ^
+            --parameters rgName="$(rgName)" environment="$(environment)" location="$(location)"
+      displayName: 'Deploy Bicep File'
