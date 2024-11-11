@@ -18,7 +18,7 @@ pool:
   name: Default  # Use your self-hosted agent pool name (change if using custom pool)
 
 variables:
-  rgname: 'azure-cloud-resume-rg'  # Set this to your resource group name
+  rgname: 'azure-cloud-resume-rg'  # Set this to your existing resource group name
   location: 'Australia East'  # Define location here for reusability
   environment: 'dev'  # Define environment type
 
@@ -38,5 +38,5 @@ jobs:
           az deployment group create ^
             --resource-group "$(rgname)" ^
             --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" ^
-            --parameters rgName="$(rgname)" environment="$(environment)" location="$(location)"
+            --parameters environment="$(environment)" location="$(location)"
       displayName: 'Deploy Bicep File'
