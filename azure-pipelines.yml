@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main        # Specify the branch you want to trigger the pipeline from (e.g., main)
+      - main  # Automatically trigger on changes to the 'main' branch
   paths:
     include:
       - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
@@ -9,52 +9,59 @@ trigger:
 pr:
   branches:
     include:
-      - main        # Specify the branch you want to trigger the PR validation from (e.g., main)
+      - main  # Automatically trigger on PRs to the 'main' branch
   paths:
     include:
       - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
 
-# Specify the self-hosted agent pool
 pool:
-  name: 'Default'  # Replace with the name of your self-hosted agent pool
+  name: Default  # Use your self-hosted agent pool name (change if using custom pool)
 
 variables:
   AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'  # Set this to your resource group name
+  AZURE_TENANT_ID: 'b41db68e-4e43-42ce-9121-a29e1dd53e32'  # Your tenant ID
+  AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)  # Set in pipeline variables or key vault
+  AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)  # Set in pipeline variables or key vault
+  location: 'Australia East'  # Define location here for reusability
+  environment: 'dev'  # Define environment type
 
 jobs:
 - job: DeployInfrastructure
   displayName: 'Deploy Infrastructure'
   steps:
     
-    # Log in to Azure using Service Principal (PowerShell for cross-platform)
+    # Step 1: Login to Azure using Service Principal
     - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+        scriptType: 'powershell'  # Use Windows PowerShell
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Logging in to Azure..."
+          az login --service-principal -u $(AZURE_CLIENT_ID) -p $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
+          echo "Login successful!"
       displayName: 'Azure Login'
-      inputs:
-        azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: pwsh  # PowerShell for Windows agents
-        scriptLocation: inlineScript
-        inlineScript: |
-          az login --service-principal -u $(AZURE_CLIENT_ID) -p $(AZURE_CLIENT_SECRET) --tenant b41db68e-4e43-42ce-9121-a29e1dd53e32
     
-    # Deploy Bicep file using Azure CLI
+    # Step 2: Deploy Bicep file using az deployment group create
     - task: AzureCLI@2
-      displayName: 'Deploy Bicep Template'
       inputs:
-        azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: pwsh  # PowerShell for Windows agents
-        scriptLocation: inlineScript
+        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+        scriptType: 'powershell'  # Use Windows PowerShell
+        scriptLocation: 'inlineScript'
         inlineScript: |
-          az deployment group create \
-            --resource-group $(AZURE_RESOURCE_GROUP) \
-            --template-file ./infrastructure/main.bicep \
+          echo "Starting deployment..."
+          az deployment group create ^
+            --resource-group $(AZURE_RESOURCE_GROUP) ^
+            --template-file ./infrastructure/main.bicep ^
             --parameters ./infrastructure/parameters.bicepparam
-    
-    # Logout from Azure
+      displayName: 'Deploy Bicep Template'
+
+    # Step 3: Logout from Azure
     - task: AzureCLI@2
-      displayName: 'Azure Logout'
       inputs:
-        azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
-        scriptType: pwsh  # PowerShell for Windows agents
-        scriptLocation: inlineScript
+        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+        scriptType: 'powershell'  # Use Windows PowerShell
+        scriptLocation: 'inlineScript'
         inlineScript: |
           az logout
+      displayName: 'Azure Logout'
