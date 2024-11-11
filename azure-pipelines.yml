@@ -53,7 +53,7 @@ jobs:
     - task: AzureCLI@2
       displayName: 'Azure Logout'
       inputs:
-        azureSubscription: 'MyAzureConnection'  # Name of the service connection you created
+        azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
