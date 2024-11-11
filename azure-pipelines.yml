@@ -14,8 +14,9 @@ pr:
     include:
       - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
 
+# Specify the self-hosted agent pool
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'Agent'  # Replace with the name of your self-hosted agent pool
 
 variables:
   AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'  # Set this to your resource group name
@@ -24,7 +25,6 @@ jobs:
 - job: DeployInfrastructure
   displayName: 'Deploy Infrastructure'
   steps:
-
     
     # Log in to Azure using Service Principal
     - task: AzureCLI@2
