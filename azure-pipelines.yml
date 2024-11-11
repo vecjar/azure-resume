@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - main  # Automatically trigger on changes to the 'main' branch
+  paths:
+    include:
+      - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
+
+pr:
+  branches:
+    include:
+      - main  # Automatically trigger on PRs to the 'main' branch
+  paths:
+    include:
+      - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
+
+pool:
+  name: Default  # Use your self-hosted agent pool name (change if using custom pool)
+
+variables:
+  rgname: 'azure-cloud-resume-rg'  # Set this to your existing resource group name
+  location: 'Australia East'  # Define location here for reusability
+  environment: 'dev'  # Define environment type
+
+jobs:
+- job: DeployInfrastructure
+  displayName: 'Deploy Infrastructure'
+  steps:
+    
+    # Step 1: Deploy Bicep file using az deployment group create
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+        scriptType: 'powershell'  # Use Windows PowerShell
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Listing files in infrastructure folder..."
+          dir "$(Build.SourcesDirectory)/infrastructure"
+          echo "Starting deployment..."
+          az deployment group create --resource-group "$(rgname)" --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" --parameters "$(Build.SourcesDirectory)/infrastructure/parameters.bicepparam"
+      displayName: 'Deploy Bicep File'
