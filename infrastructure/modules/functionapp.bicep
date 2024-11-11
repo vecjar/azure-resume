@@ -84,10 +84,7 @@ resource appService 'Microsoft.Web/serverfarms@2022-09-01' = {
 resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppName
   location: location
-  // Optional: Uncomment if SystemAssigned identity is needed
-  // identity: {
-  //   type: 'SystemAssigned'
-  // }
+  
   kind: 'functionapp'
   properties: {
     enabled: true

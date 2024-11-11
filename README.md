@@ -28,5 +28,5 @@ az deployment group create --resource-group azure-cloud-resume-rg --template-fil
 # Post Manual Deployments
 Create Cosmos DB item id: 1 and count: 0 in json
 Set Function App enviroment variable = AzureResumeConnectionString = {cosmosdb key}
-Enable CORS in Function App and add https://jarrodvecchiet.azureedge.net to Allowed Origens
+Enable CORS in Function App and add https://jv.azureedge.net to Allowed Origens
 Set const functionApiUrl in main.js to the Function URL before deploying static website

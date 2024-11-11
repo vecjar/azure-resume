@@ -6,4 +6,4 @@ using 'main.bicep'
 param appName = 'AzureCloudResume'
 
 @description('provide your custom domain url that should be enabled by cors')
-param cors = 'https://jarrodvecchiet.azureedge.net'
+param cors = 'https://jv.azureedge.net'

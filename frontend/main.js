@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     getVisitCount();
 })
 
-const functionApiUrl = 'https://func-azurecloudresume-api-b2tc.azurewebsites.net/api/GetResumeCounter?code=BdbtMmvfXVv3yC4nP7eOu_KEg6heEji_kbkFcPsxtFArAzFuwPTsfQ%3D%3D'
+const functionApiUrl = 'https://func-azurecloudresume-api-b2tc.azurewebsites.net/api/GetResumeCounter?code=ml9nx7LQz7_LdtPSAU88wTcy8_tOzEl9_nx2QCl52NQSAzFuUOempA%3D%3D'
 const localFunctionApi = 'http://localhost:7071/api/GetResumeCounter'
 
 const getVisitCount = () => {
