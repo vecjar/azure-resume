@@ -3,9 +3,6 @@ param functionRuntime string = 'dotnet'
 param appName string
 param cors string
 
-// @description('User-assigned managed identity that will be attached to this function and will have power to connect to different resources.')
-// param managedSystemIdentityRbacId string
-
 @description('The name of the role or service of this function. Example: Api CommandHandler, EventHandler')
 param appInternalServiceName string = 'api'
 
@@ -19,7 +16,7 @@ var functionAppName = 'func-${appName}-${appInternalServiceName}-${appNameSuffix
 var appServiceName = 'ASP-${appName}-${appInternalServiceName}-${appNameSuffix}'
 
 // Remove dashes for storage account name
-var storageAccountName =  toLower(format('stg{0}', replace('${appInternalServiceName}-${appNameSuffix}', '-', '')))
+var storageAccountName = toLower(format('stg{0}', replace('${appInternalServiceName}-${appNameSuffix}', '-', '')))
 
 // Create Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
@@ -31,7 +28,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   kind: 'StorageV2'
   properties: {
     supportsHttpsTrafficOnly: true
-    minimumTlsVersion:'TLS1_2'
+    minimumTlsVersion: 'TLS1_2'
     encryption: {
       services: {
         file: {
@@ -87,12 +84,10 @@ resource appService 'Microsoft.Web/serverfarms@2022-09-01' = {
 resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppName
   location: location
-  identity: {
-    type: 'SystemAssigned, UserAssigned'
-    // userAssignedIdentities: {
-    //   '${managedSystemIdentityRbacId}': {}
-    // }
-  }
+  // Optional: Uncomment if SystemAssigned identity is needed
+  // identity: {
+  //   type: 'SystemAssigned'
+  // }
   kind: 'functionapp'
   properties: {
     enabled: true
@@ -111,7 +106,6 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
     serverFarmId: appService.id
     siteConfig: {
       appSettings: [
-        // Storage Account connection string is still passed, but no function code deployment
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
