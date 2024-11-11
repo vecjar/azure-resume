@@ -19,9 +19,6 @@ pool:
 
 variables:
   AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'  # Set this to your resource group name
-  AZURE_TENANT_ID: 'b41db68e-4e43-42ce-9121-a29e1dd53e32'  # Your tenant ID
-  AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)  # Set in pipeline variables or key vault
-  AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)  # Set in pipeline variables or key vault
   location: 'Australia East'  # Define location here for reusability
   environment: 'dev'  # Define environment type
 
@@ -30,19 +27,7 @@ jobs:
   displayName: 'Deploy Infrastructure'
   steps:
     
-    # Step 1: Login to Azure using Service Principal
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
-        scriptType: 'powershell'  # Use Windows PowerShell
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          echo "Logging in to Azure..."
-          az login --service-principal -u $(AZURE_CLIENT_ID) -p $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
-          echo "Login successful!"
-      displayName: 'Azure Login'
-    
-    # Step 2: Deploy Bicep file using az deployment group create
+    # Step 1: Deploy Bicep file using az deployment group create
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
@@ -56,7 +41,7 @@ jobs:
             --parameters ./infrastructure/parameters.bicepparam
       displayName: 'Deploy Bicep Template'
 
-    # Step 3: Logout from Azure
+    # Step 2: Logout from Azure (Optional, if you want to logout explicitly)
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
