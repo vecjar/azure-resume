@@ -35,8 +35,8 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo "Starting deployment..."
-          az deployment sub create ^
-            --location "$(location)" ^
+          az deployment group create ^
+            --resource-group "$(rgname)" ^
             --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" ^
-            --parameters rgName="$(rgName)" environment="$(environment)" location="$(location)"
+            --parameters rgName="$(rgname)" environment="$(environment)" location="$(location)"
       displayName: 'Deploy Bicep File'
