@@ -30,7 +30,7 @@ jobs:
     - task: AzureCLI@2
       displayName: 'Azure Login'
       inputs:
-        azureSubscription: '$(AZURE_SUBSCRIPTION)'  # Azure service connection
+        azureSubscription: 'AzureResumeConnection'  # Name of the service connection you created
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
@@ -40,7 +40,7 @@ jobs:
     - task: AzureCLI@2
       displayName: 'Deploy Bicep Template'
       inputs:
-        azureSubscription: '$(AZURE_SUBSCRIPTION)'  # Azure service connection
+        azureSubscription: 'MyAzureConnection'  # Name of the service connection you created
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
@@ -53,7 +53,7 @@ jobs:
     - task: AzureCLI@2
       displayName: 'Azure Logout'
       inputs:
-        azureSubscription: '$(AZURE_SUBSCRIPTION)'  # Azure service connection
+        azureSubscription: 'MyAzureConnection'  # Name of the service connection you created
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
