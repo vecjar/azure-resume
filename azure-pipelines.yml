@@ -1,41 +1,65 @@
 trigger:
   branches:
     include:
-      - main  # Automatically trigger on changes to the 'main' branch
+      - main  # Trigger on changes to the 'main' branch
   paths:
     include:
-      - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
+      - frontend/**  # Trigger on changes under the 'frontend' folder
 
 pr:
   branches:
     include:
-      - main  # Automatically trigger on PRs to the 'main' branch
+      - main  # Trigger on PRs to the 'main' branch
   paths:
     include:
-      - 'infrastructure/**'  # Trigger on any changes under the infrastructure folder
+      - frontend/**  # Trigger on changes under the 'frontend' folder
 
 pool:
-  name: Default  # Use your self-hosted agent pool name (change if using custom pool)
+  name: Default  # Use your self-hosted agent pool name
 
 variables:
-  rgname: 'azure-cloud-resume-rg'  # Set this to your existing resource group name
+  rgname: 'azure-cloud-resume-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
-  environment: 'dev'  # Define environment type
+  STORAGE_ACCOUNT_NAME: 'azureresumewebsitejv'  # Replace with your storage account name
+  STORAGE_ACCOUNT_KEY: 'EgGHrCMtwDJicrWnJ9FbzKJNpTvQQvrnP8Qg+gzcL2GoFJkx/IBhj6gE6p9Y5UH+ErtFLLH9YZHZ+AStX3vGBA=='  # Set your Storage Account key here (or through pipeline secrets)
+  CDN_PROFILE_NAME: 'jarrodsazureresume'  # Replace with your CDN profile name
+  CDN_ENDPOINT_NAME: 'jarrodvecchietsresume'  # Replace with your CDN endpoint name
 
 jobs:
-- job: DeployInfrastructure
-  displayName: 'Deploy Infrastructure'
-  steps:
-    
-    # Step 1: Deploy Bicep file using az deployment group create
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
-        scriptType: 'powershell'  # Use Windows PowerShell
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          echo "Listing files in infrastructure folder..."
-          dir "$(Build.SourcesDirectory)/infrastructure"
-          echo "Starting deployment..."
-          az deployment group create --resource-group "$(rgname)" --template-file "$(Build.SourcesDirectory)/infrastructure/main.bicep" --parameters "$(Build.SourcesDirectory)/infrastructure/parameters.bicepparam"
-      displayName: 'Deploy Bicep File'
+  - job: DeployFrontend
+    displayName: 'Deploy Frontend to Azure'
+    steps:
+      - checkout: self
+
+      # Step 1: Upload files to blob storage
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
+            echo "Uploading files to blob storage..."
+            az storage blob upload-batch --account-name azureresumewebsitejv --account-key $(STORAGE_ACCOUNT_KEY) -d "$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
+
+        displayName: 'Upload to Blob Storage'
+
+      # Step 2: Purge the CDN endpoint cache
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'AzureResumeConnection'
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
+            echo "Purging CDN endpoint cache..."
+            az cdn endpoint purge --content-paths "/*" --profile-name $(CDN_PROFILE_NAME) --name $(CDN_ENDPOINT_NAME) --resource-group $(rgname)
+        displayName: 'Purge CDN Cache'
+
+      # Step 3: Azure Logout
+      - task: AzureCLI@2
+        displayName: 'Azure Logout'
+        inputs:
+          azureSubscription: 'AzureResumeConnection'
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
+            az logout
