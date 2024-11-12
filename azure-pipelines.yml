@@ -39,7 +39,7 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Uploading files to blob storage..."
-            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) -d "`$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
+            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) -d '`$web' -s "$(Build.SourcesDirectory)/frontend" --overwrite
         displayName: 'Upload to Blob Storage'
 
       # Step 2: Purge the CDN endpoint cache
