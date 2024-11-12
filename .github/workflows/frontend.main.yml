@@ -1,48 +1,65 @@
-name: Deploy_frontend
+trigger:
+  branches:
+    include:
+      - main  # Trigger on changes to the 'main' branch
+  paths:
+    include:
+      - frontend/**  # Trigger on changes under the 'frontend' folder
 
-on:
-    push:
-        branches: [ main ]
-        paths:
-        - 'frontend/**'
-    workflow_dispatch:
+pr:
+  branches:
+    include:
+      - main  # Trigger on PRs to the 'main' branch
+  paths:
+    include:
+      - frontend/**  # Trigger on changes under the 'frontend' folder
 
-permissions:
-    id-token: write
-    contents: read
+pool:
+  name: Default  # Use your self-hosted agent pool name
 
-env:
-  AZURE_BLOB_STORAGE_ACCOUNT_NAME: 'stgapib2tc'   # set this to your blob storage account name that hosts static website
-  AZURE_CDN_PROFILE_NAME: 'azurecloudresumeb2td'       # set this to your cdn profile name
-  AZURE_CDN_ENDPOINT_NAME: 'azurecloudresumeb2td'                   # set this to your cdn endpoint name
-  AZURE_RESOURCE_GROUP: 'azure-cloud-resume-rg'                   # set this to your resource group name
+variables:
+  rgname: 'azure-cloud-resume-rg'  # Replace with your resource group name
+  location: 'Australia East'  # Define location here for reusability
+  STORAGE_ACCOUNT_NAME: 'azureresumewebsitejv'  # Replace with your storage account name
+  STORAGE_ACCOUNT_KEY: 'EgGHrCMtwDJicrWnJ9FbzKJNpTvQQvrnP8Qg+gzcL2GoFJkx/IBhj6gE6p9Y5UH+ErtFLLH9YZHZ+AStX3vGBA=='  # Set your Storage Account key here (or through pipeline secrets)
+  CDN_PROFILE_NAME: 'jarrodsazureresume'  # Replace with your CDN profile name
+  CDN_ENDPOINT_NAME: 'jarrodvecchietsresume'  # Replace with your CDN endpoint name
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment: production
+  - job: DeployFrontend
+    displayName: 'Deploy Frontend to Azure'
     steps:
-    - uses: actions/checkout@v3
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - checkout: self
 
-    - name: Upload to blob storage
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-            az storage blob upload-batch --account-name ${{ env.AZURE_BLOB_STORAGE_ACCOUNT_NAME }} --auth-mode key -d '$web' -s frontend/ --overwrite
-    - name: Purge CDN endpoint
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-           az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.AZURE_CDN_PROFILE_NAME }} --name ${{ env.AZURE_CDN_ENDPOINT_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+      # Step 1: Upload files to blob storage
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
+            echo "Uploading files to blob storage..."
+            az storage blob upload-batch --account-name azureresumewebsitejv --account-key $(STORAGE_ACCOUNT_KEY) -d "$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
 
-  # Azure logout
-    - name: logout
-      run: |
+        displayName: 'Upload to Blob Storage'
+
+      # Step 2: Purge the CDN endpoint cache
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'AzureResumeConnection'
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
+            echo "Purging CDN endpoint cache..."
+            az cdn endpoint purge --content-paths "/*" --profile-name $(CDN_PROFILE_NAME) --name $(CDN_ENDPOINT_NAME) --resource-group $(rgname)
+        displayName: 'Purge CDN Cache'
+
+      # Step 3: Azure Logout
+      - task: AzureCLI@2
+        displayName: 'Azure Logout'
+        inputs:
+          azureSubscription: 'AzureResumeConnection'
+          scriptType: powershell  # Switch back to PowerShell
+          scriptLocation: inlineScript
+          inlineScript: |
             az logout
-      if: always()
