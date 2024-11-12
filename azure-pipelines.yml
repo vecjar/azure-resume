@@ -1,5 +1,3 @@
-# azure-pipelines.yml
-
 trigger:
   branches:
     include:
@@ -23,6 +21,7 @@ variables:
   rgname: 'azure-cloud-resume-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
   STORAGE_ACCOUNT_NAME: 'azureresumewebsitejv'  # Replace with your storage account name
+  STORAGE_ACCOUNT_KEY: $(STORAGE_ACCOUNT_KEY)  # Set your Storage Account key here (or through pipeline secrets)
   CDN_PROFILE_NAME: 'jarrodsazureresume'  # Replace with your CDN profile name
   CDN_ENDPOINT_NAME: 'jarrodvecchietsresume'  # Replace with your CDN endpoint name
 
@@ -40,7 +39,7 @@ jobs:
           scriptLocation: inlineScript
           inlineScript: |
             echo "Uploading files to blob storage..."
-            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --auth-mode key -d '$web' -s "$(Build.SourcesDirectory)/frontend" --overwrite
+            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) -d "\$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
         displayName: 'Upload to Blob Storage'
 
       # Step 2: Purge the CDN endpoint cache
