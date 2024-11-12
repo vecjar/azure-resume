@@ -35,18 +35,18 @@ jobs:
       - task: AzureCLI@2
         inputs:
           azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
-          scriptType: bash  # Switch to bash
+          scriptType: powershell  # Switch back to PowerShell
           scriptLocation: inlineScript
           inlineScript: |
             echo "Uploading files to blob storage..."
-            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) -d "\$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
+            az storage blob upload-batch --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) -d "`$web" -s "$(Build.SourcesDirectory)/frontend" --overwrite
         displayName: 'Upload to Blob Storage'
 
       # Step 2: Purge the CDN endpoint cache
       - task: AzureCLI@2
         inputs:
           azureSubscription: 'AzureResumeConnection'
-          scriptType: bash  # Switch to bash
+          scriptType: powershell  # Switch back to PowerShell
           scriptLocation: inlineScript
           inlineScript: |
             echo "Purging CDN endpoint cache..."
@@ -58,7 +58,7 @@ jobs:
         displayName: 'Azure Logout'
         inputs:
           azureSubscription: 'AzureResumeConnection'
-          scriptType: bash  # Switch to bash
+          scriptType: powershell  # Switch back to PowerShell
           scriptLocation: inlineScript
           inlineScript: |
             az logout
