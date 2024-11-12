@@ -36,7 +36,7 @@ jobs:
       - task: AzureCLI@2
         inputs:
           azureSubscription: 'AzureResumeConnection'  # Replace with your Azure service connection name
-          scriptType: bash
+          scriptType: powershell
           scriptLocation: inlineScript
           inlineScript: |
             echo "Uploading files to blob storage..."
@@ -47,7 +47,7 @@ jobs:
       - task: AzureCLI@2
         inputs:
           azureSubscription: 'AzureResumeConnection'
-          scriptType: bash
+          scriptType: powershell
           scriptLocation: inlineScript
           inlineScript: |
             echo "Purging CDN endpoint cache..."
@@ -59,7 +59,7 @@ jobs:
         displayName: 'Azure Logout'
         inputs:
           azureSubscription: 'AzureResumeConnection'
-          scriptType: bash
+          scriptType: powershell
           scriptLocation: inlineScript
           inlineScript: |
             az logout
