@@ -1,32 +1,33 @@
 # Cloud resume in Azure
-My implementation of Cloud resume challenge, in Azure. The goal was to build a static resume website that is hosted in Azure blob storage; implement a visitor counter that uses Azure Functions to get and update visitor counter data stored in CosmosDB database; use Azure CDN to enable https and custom domain; build a CI/CD pipeline with Github Actions to make the website publishing effortless. I also Azure DNS to manage custom domain and built the whole Azure infrastructure and most of their configurations with Bicep.
+For my implementation of the Cloud Resume Challenge in Azure, I set out to create a static resume website hosted on Azure Blob Storage. The project required integrating several Azure services, including an Azure Function to handle the visitor counter, which interacts with a CosmosDB to store and update visitor data. To enhance the site’s performance and security, I configured Azure CDN to enable HTTPS and a custom domain, alongside setting up Azure DNS for domain management.
 
-My main goals were to get hands-on experience with various Azure resources, their configuration, deploying those resources with IaC, learn Bicep, and get experience in building a CI/CD pipeline.
+To streamline the deployment process, I built a fully automated CI/CD pipeline with Azure DevOps, ensuring effortless updates to the website in the future. The entire infrastructure, including the website and services, was provisioned using Bicep.
+
+This project gave me the opportunity to deepen my experience with a variety of Azure resources—some of which were new to me and others that I had previously worked with as a Junior Cloud Consultant. By leveraging Bicep to provision the necessary services and connecting the front and back ends to Azure DevOps Pipelines, I achieved my goal of creating a semi automated and scalable solution for hosting my Azure resume.
 
 # Components
 Frontend:
-- A nice looking static website template by ceevee that I customized to fit my needs.
+- A nice looking static website template that I customized to fit my needs.
 - Visitor counter: Javascript code in main.js that triggers an Azure Function
 
 Backend:
 - Azure CosmosDB database to store visitor counter data
-- Azure Functions binded to CosmosDB, to get and update the visitor counter data. Code in C#, originally by madebygps. I made some changes to the code as I'm provisioning Azure resources with Bicep -> now Functions code adds a count item to the database container after it is provisioned.
+- Azure Functions binded to CosmosDB, to get and update the visitor counter data, written in C#.
 - Static website hosting in a blob storage.
-- Managed identities to allow resources to access deployment script that enables static website hosting in a storage account
 - Azure CDN to enable custom domain and https
 - Azure DNS to host my custom domain in Azure and to add CNAME records.
 
-CI/CD with GitHub Actions:
-- Frontend workflow: Changes in website code and they are pushed to GitHub repository -> GitHub Actions updates the website files in Azure blob storage
-- Backend workflow: Changes in the visitor counter code and changes are pushed to GitHub repository -> GitHub Actions updates the Azure Function
-- Infrastructure workflow: manual triggered workflow to deploy Azure infrastructure resources
+CI/CD with Azure Devops:
+- Frontend workflow: Changes in website code and they are pushed to Azure Devops repository -> Azure Devops Pipeline updates the website files in Azure blob storage
+- Backend workflow: Changes in the visitor counter code and changes are pushed to Azure Devops repository -> Azure Devops Pipeline updates the Azure Function
+- Infrastructure workflow: Inital deployment of infrastructure using Bicep
 
-# Deployment
+# Initial Bicep Deployment
 az group create --name azure-cloud-resume-rg --location australiaeast
 az deployment group create --resource-group azure-cloud-resume-rg --template-file ./main.bicep --parameters ./parameters.bicepparam
 
-# Post Manual Deployments
+# Post Deployment Configuration
 Create Cosmos DB item id: 1 and count: 0 in json
 Set Function App enviroment variable = AzureResumeConnectionString = {cosmosdb key}
 Enable CORS in Function App and add https://jv.azureedge.net to Allowed Origens
-Set const functionApiUrl in main.js to the Function URL before deploying static website
+Set const functionApiUrl in main.js to the Function URL before deploying static website pre ci/cd
