@@ -21,7 +21,7 @@ variables:
   rgname: 'azure-cloud-resume-rg'  # Replace with your resource group name
   location: 'Australia East'  # Define location here for reusability
   STORAGE_ACCOUNT_NAME: 'azureresumewebsitejv'  # Replace with your storage account name
-  STORAGE_ACCOUNT_KEY: $(STORAGE_ACCOUNT_KEY)  # Set your Storage Account key here (or through pipeline secrets)
+  STORAGE_ACCOUNT_KEY: 'EgGHrCMtwDJicrWnJ9FbzKJNpTvQQvrnP8Qg+gzcL2GoFJkx/IBhj6gE6p9Y5UH+ErtFLLH9YZHZ+AStX3vGBA=='  # Set your Storage Account key here (or through pipeline secrets)
   CDN_PROFILE_NAME: 'jarrodsazureresume'  # Replace with your CDN profile name
   CDN_ENDPOINT_NAME: 'jarrodvecchietsresume'  # Replace with your CDN endpoint name
 
