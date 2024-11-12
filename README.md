@@ -19,7 +19,6 @@ Backend:
 
 CI/CD with Azure Devops:
 - Frontend workflow: Changes in website code and they are pushed to Azure Devops repository -> Azure Devops Pipeline updates the website files in Azure blob storage
-- Backend workflow: Changes in the visitor counter code and changes are pushed to Azure Devops repository -> Azure Devops Pipeline updates the Azure Function
 - Infrastructure workflow: Inital deployment of infrastructure using Bicep
 
 # Initial Bicep Deployment
