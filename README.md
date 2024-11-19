@@ -20,13 +20,3 @@ Backend:
 CI/CD with Azure Devops:
 - Frontend workflow: Changes in website code and they are pushed to Azure Devops repository -> Azure Devops Pipeline updates the website files in Azure blob storage
 - Infrastructure workflow: Inital deployment of infrastructure using Bicep
-
-# Initial Bicep Deployment
-az group create --name azure-cloud-resume-rg --location australiaeast
-az deployment group create --resource-group azure-cloud-resume-rg --template-file ./main.bicep --parameters ./parameters.bicepparam
-
-# Post Deployment Configuration
-Create Cosmos DB item id: 1 and count: 0 in json
-Set Function App enviroment variable = AzureResumeConnectionString = {cosmosdb key}
-Enable CORS in Function App and add https://jv.azureedge.net to Allowed Origens
-Set const functionApiUrl in main.js to the Function URL before deploying static website pre ci/cd
