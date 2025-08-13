@@ -3,7 +3,7 @@ For my implementation of the Cloud Resume Challenge in Azure, I set out to creat
 
 To streamline the deployment process, I built a fully automated CI/CD pipeline with Azure DevOps, ensuring effortless updates to the website in the future. The entire infrastructure, including the website and services, was provisioned using Bicep.
 
-This project gave me the opportunity to deepen my experience with a variety of Azure resources—some of which were new to me and others that I had previously worked with as a Junior Cloud Consultant. By leveraging Bicep to provision the necessary services and connecting the front and back ends to Azure DevOps Pipelines, I achieved my goal of creating a semi automated and scalable solution for hosting my Azure resume.
+This project gave me the opportunity to deepen my experience with a variety of Azure resources, some of which were new to me and others that I had previously worked with as a Junior Cloud Consultant. By leveraging Bicep to provision the necessary services and connecting the front and back ends to Azure DevOps Pipelines, I achieved my goal of creating a semi automated and scalable solution for hosting my Azure resume.
 
 # Components
 Frontend:
