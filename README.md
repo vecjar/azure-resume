@@ -1,5 +1,5 @@
 # Cloud resume in Azure
-For my implementation of the Cloud Resume Challenge in Azure, I set out to create a static resume website hosted on Azure Blob Storage. The project required integrating several Azure services, including an Azure Function to handle the visitor counter, which interacts with a CosmosDB to store and update visitor data. To enhance the site’s performance and security, I configured Azure CDN to enable HTTPS and a custom domain, alongside setting up Azure DNS for domain management.
+For my implementation of the Cloud Resume Challenge in Azure, I set out to create a static resume website hosted on Azure Blob Storage. The project required integrating several Azure services, including an Azure Function to handle the visitor counter, which interacts with a CosmosDB to store and update visitor data.
 
 To streamline the deployment process, I built a fully automated CI/CD pipeline with Azure DevOps, ensuring effortless updates to the website in the future. The entire infrastructure, including the website and services, was provisioned using Bicep.
 
