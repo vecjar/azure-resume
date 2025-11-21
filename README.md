@@ -14,7 +14,6 @@ Backend:
 - Azure CosmosDB database to store visitor counter data
 - Azure Functions binded to CosmosDB, to get and update the visitor counter data, written in C#.
 - Static website hosting in a blob storage.
-- Azure CDN to enable custom domain and https
 - Azure DNS to host my custom domain in Azure and to add CNAME records.
 
 CI/CD with Azure Devops:
